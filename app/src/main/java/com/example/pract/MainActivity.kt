@@ -1,4 +1,4 @@
-package com.example.collegeschedule
+package com.example.pract
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
