@@ -1,4 +1,4 @@
-package com.example.collegeschedule.ui.schedule
+package com.example.pract.ui.schedule
 
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text

@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation("com.squareup.retrofit2:retrofit:2.12.0")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("com.squareup.retrofit2:converter-gson:2.12.0")
     // Управление состоянием UI (ViewModel для Compose) – опционально, если ктото захочет лезть в MVVM
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
