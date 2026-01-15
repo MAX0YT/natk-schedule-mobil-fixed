@@ -7,7 +7,7 @@ import kotlin.jvm.java
 
 object RetrofitInstance {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:5268/")
+        .baseUrl("http://192.168.1.12:5237/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val api: ScheduleApi = retrofit.create(ScheduleApi::class.java)
