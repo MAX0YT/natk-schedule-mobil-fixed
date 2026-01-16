@@ -15,18 +15,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.example.pract.data.api.ScheduleApi
+import com.example.pract.data.dto.GroupDto
 import com.example.pract.data.repository.ScheduleRepository
+import com.example.pract.ui.favorites.FavoritesScreen
 import com.example.pract.ui.schedule.ScheduleScreen
 import com.example.pract.ui.theme.PractTheme
+import com.example.pract.utils.getFavoritesFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -54,6 +62,31 @@ fun CollegeScheduleApp() {
     }
     val api = remember { retrofit.create(ScheduleApi::class.java) }
     val repository = remember { ScheduleRepository(api) }
+    var selectedGroup by rememberSaveable { mutableStateOf("") }
+    var groups by remember { mutableStateOf<List<GroupDto>>(emptyList()) }
+    var groupsLoaded by remember { mutableStateOf(false) }
+    var errorGroups by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+    var favorites by remember { mutableStateOf<Set<String>>(emptySet()) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        getFavoritesFlow(context).collectLatest { favorites = it }
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            groups = repository.getGroups()
+            if (groups.isNotEmpty()) {
+                selectedGroup = groups.find { it.groupName == "ИС-12" }?.groupName ?: groups[0].groupName
+            }
+        } catch (e: Exception) {
+            errorGroups = e.message
+        } finally {
+            groupsLoaded = true
+        }
+    }
+
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             AppDestinations.entries.forEach {
@@ -73,9 +106,26 @@ fun CollegeScheduleApp() {
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when (currentDestination) {
-                AppDestinations.HOME -> ScheduleScreen(repository)
-                AppDestinations.FAVORITES ->
-                    Text("Избранные группы", modifier = Modifier.padding(innerPadding))
+                AppDestinations.HOME -> if (errorGroups != null) {
+                    Text("Ошибка загрузки групп: $errorGroups", modifier = Modifier.padding(innerPadding))
+                } else {
+                    ScheduleScreen(
+                        repository = repository,
+                        selectedGroup = selectedGroup,
+                        onSelectedGroupChange = { selectedGroup = it },
+                        favorites = favorites,
+                        groupsLoaded = groupsLoaded,
+                        groups = groups
+                    )
+                }
+                AppDestinations.FAVORITES -> FavoritesScreen(
+                    favorites = favorites,
+                    onGroupClick = { group ->
+                        selectedGroup = group
+                        currentDestination = AppDestinations.HOME
+                    },
+                    innerPadding = innerPadding
+                )
                 AppDestinations.PROFILE ->
                     Text("Профиль студента", modifier = Modifier.padding(innerPadding))
             }
