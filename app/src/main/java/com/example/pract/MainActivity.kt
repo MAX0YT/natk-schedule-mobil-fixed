@@ -1,4 +1,5 @@
 package com.example.pract
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,7 @@ import com.example.pract.ui.schedule.ScheduleScreen
 import com.example.pract.ui.theme.PractTheme
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +41,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @PreviewScreenSizes
 @Composable
 fun CollegeScheduleApp() {
-    var currentDestination by rememberSaveable {
-        mutableStateOf(AppDestinations.HOME) }
+    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     val retrofit = remember {
         Retrofit.Builder()
             .baseUrl("http://192.168.1.12:5237/") // localhost для Android Emulator
@@ -71,17 +73,16 @@ fun CollegeScheduleApp() {
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when (currentDestination) {
-                AppDestinations.HOME -> ScheduleScreen()
+                AppDestinations.HOME -> ScheduleScreen(repository)
                 AppDestinations.FAVORITES ->
-                    Text("Избранные группы", modifier =
-                        Modifier.padding(innerPadding))
+                    Text("Избранные группы", modifier = Modifier.padding(innerPadding))
                 AppDestinations.PROFILE ->
-                    Text("Профиль студента", modifier =
-                        Modifier.padding(innerPadding))
+                    Text("Профиль студента", modifier = Modifier.padding(innerPadding))
             }
         }
     }
 }
+
 enum class AppDestinations(
     val label: String,
     val icon: ImageVector,

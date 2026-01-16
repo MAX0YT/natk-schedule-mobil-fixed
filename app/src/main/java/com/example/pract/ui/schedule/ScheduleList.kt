@@ -1,4 +1,5 @@
 package com.example.pract.ui.schedule
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,9 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.pract.data.dto.ScheduleByDateDto
+
 @Composable
-fun ScheduleList(data: List<ScheduleByDateDto>) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+fun ScheduleList(
+    data: List<ScheduleByDateDto>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
         items(data) { day ->
             Text(
                 "${day.lessonDate} (${day.weekday})",
