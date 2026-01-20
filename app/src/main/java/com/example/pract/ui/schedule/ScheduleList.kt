@@ -39,7 +39,7 @@ fun ScheduleList(
     LazyColumn(modifier = modifier) {
         items(data) { day ->
             Text(
-                text = "${day.lessonDate} (${day.weekday})",
+                text = "${day.lessonDate.substring(0, 10)} (${day.weekday})",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
@@ -103,7 +103,7 @@ fun LessonPartRow(part: LessonGroupPart, info: LessonPartDto) {
         Spacer(modifier = Modifier.padding(8.dp))
         Column {
             Text(
-                text = "$part: ${info.subject}",
+                text = "${getPartName(part)}${info.subject}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -133,16 +133,25 @@ fun getLessonTypeIcon(subject: String): ImageVector {
 @Composable
 fun getBuildingColor(building: String): Color {
     return when (building) {
-        "Корпус инженерии" -> Color(0xFF2196F3) // Синий
-        "Учебный корпус №2" -> Color(0xFF4CAF50) // Зеленый
-        "Спортивный корпус" -> Color(0xFFFFC107) // Желтый
-        "Лабораторный корпус" -> Color(0xFF21CCF3) // Желтый
-        "Главный корпус" -> Color(0xFFE91E63) // Розовый
-        "Физический корпус" -> Color(0xFFE91EFF) // Розовый
-        "Корпус Психологии" -> Color(0xFFCCAA22) // Розовый
-        "Корпус Экономики" -> Color(0xFF00C107) // Розовый
-        "Институт ИТ" -> Color(0xFF0066F3) // Розовый
-        "Библиотечный центр" -> Color(0xFF555555) // Розовый
+        "Корпус инженерии" -> Color(0xFF2196F3)
+        "Учебный корпус №2" -> Color(0xFF4CAF50)
+        "Спортивный корпус" -> Color(0xFFFFC107)
+        "Лабораторный корпус" -> Color(0xFF21CCF3)
+        "Главный корпус" -> Color(0xFFE91E63)
+        "Физический корпус" -> Color(0xFFE91EFF)
+        "Корпус Психологии" -> Color(0xFFCCAA22)
+        "Корпус Экономики" -> Color(0xFF00C107)
+        "Институт ИТ" -> Color(0xFF0066F3)
+        "Библиотечный центр" -> Color(0xFF555555)
         else -> MaterialTheme.colorScheme.secondary
+    }
+}
+
+fun getPartName(part: LessonGroupPart): String {
+    return when ("${part}") {
+        "FULL" -> ""
+        "SUB1" -> "1 подгруппа: "
+        "SUB2" -> "2 подгруппа: "
+        else -> "???"
     }
 }
